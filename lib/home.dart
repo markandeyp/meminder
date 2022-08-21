@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:realm/realm.dart';
 
@@ -20,7 +21,9 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     RealmResults<Item> allItems = widget.realm.all<Item>();
     items = allItems.toList();
-    print(allItems.length);
+    if (kDebugMode) {
+      print(allItems.length);
+    }
   }
 
   @override
