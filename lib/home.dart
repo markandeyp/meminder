@@ -1,12 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:realm/realm.dart';
 
 import 'schemas/item.dart';
 
 class HomeView extends StatefulWidget {
   final Realm realm;
-  const HomeView({Key? key, required this.realm}) : super(key: key);
+  final FlutterLocalNotificationsPlugin notificationsPlugin;
+
+  const HomeView(
+      {Key? key, required this.realm, required this.notificationsPlugin})
+      : super(key: key);
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -47,6 +52,8 @@ class _HomeViewState extends State<HomeView> {
                   widget.realm.add<Item>(Item(ObjectId(), title));
                 });
 
+                showNotification(title);
+
                 setState(() {
                   items = widget.realm.all<Item>().toList();
                 });
@@ -59,5 +66,17 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
     );
+  }
+
+  void showNotification(String message) async {
+    const MacOSNotificationDetails macOSNotificationDetails =
+        MacOSNotificationDetails(
+            presentAlert: true, presentSound: true, presentBadge: true);
+
+    const NotificationDetails notificationDetails =
+        NotificationDetails(macOS: macOSNotificationDetails);
+
+    await widget.notificationsPlugin
+        .show(0, "MEMinder", message, notificationDetails);
   }
 }
